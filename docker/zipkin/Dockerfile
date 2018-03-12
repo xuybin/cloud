@@ -18,7 +18,8 @@ ENV ZIPKIN_REPO https://jcenter.bintray.com
 ENV ZIPKIN_VERSION 2.5.2
 
 # Use to set heap, trust store or other system properties.
-ENV JAVA_OPTS -Djava.security.egd=file:/dev/./urandom
+# ENV JAVA_OPTS -Djava.security.egd=file:/dev/./urandom
+ENV JAVA_MAIN_CLASS org.springframework.boot.loader.PropertiesLauncher
 
 # Add environment settings for supported storage types
 COPY zipkin/ /zipkin/
@@ -33,5 +34,5 @@ RUN apk add unzip --no-cache && \
 EXPOSE 9410 9411
 
 CMD test -n "$STORAGE_TYPE" && source .${STORAGE_TYPE}_profile; \
-    exec /zipkin/run-java.sh JAVA_MAIN_CLASS=org.springframework.boot.loader.PropertiesLauncher
+    exec /zipkin/run-java.sh
 # exec java ${JAVA_OPTS} -cp . org.springframework.boot.loader.PropertiesLauncher
