@@ -1,0 +1,113 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${System.properties['springBootVersion']}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'people.data.cloud'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = "${System.properties['javaVersion']}"
+targetCompatibility = "${System.properties['javaVersion']}"
+tasks.withType(JavaCompile) {
+    options.encoding = "${System.properties['encoding']}"
+}
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+dependencies {
+	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+configurations {
+    //compile.exclude module: 'spring-boot-starter-tomcat'
+}
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${System.properties['springCloudVersion']}"
+	}
+}
+
+
+task bootRunStandalone(dependsOn: bootRun){
+	println 'bootRunStandalone'
+    if (!System.properties['spring.profiles.active']) {
+        System.properties['spring.profiles.active']= 'standalone'
+    }
+}
+
+task bootRunPeerAware(dependsOn: bootRun) {
+	println 'bootRunPeerAware'
+    if (!System.properties['spring.profiles.active']) {
+        System.properties['spring.profiles.active']= 'peerAware'
+    }
+}
+
+
+task bootJarStandalone(dependsOn: bootJar){
+    println 'bootJarStandalone'
+    if (!System.properties['spring.profiles.active']) {
+        System.properties['spring.profiles.active']= 'standalone'
+    }
+}
+
+task bootJarPeerAware(dependsOn: bootJar) {
+    println 'bootJarPeerAware'
+    if (!System.properties['spring.profiles.active']) {
+        System.properties['spring.profiles.active']= 'peerAware'
+    }
+}
+
+def env = System.getProperty("env") ?: "dev"
+
+
+// 显示当前项目下所有用于 compile 的 jar.
+task listJars(description: 'Display all compile jars.') << {
+    configurations.compile.each { File file -> println file.name }
+}
+
+
+
+
+
+
+
+processResources{
+    sourceSets.main.resources.srcDirs= ["src/main/resources","src/main/profile/$env"]
+    println "1processResources"
+    println "sourceSets.main.resources.srcDirs="+sourceSets.main.resources.srcDirs.each { File file -> println file.name }
+}
+
+compileJava{
+    println "2compileJava"
+    println "sourceSets.main.java.srcDirs="+sourceSets.main.java.srcDirs.each { File file -> println file.name }
+}
+
+bootRun {
+    println "3bootRun"
+    if (System.properties.containsKey('spring.profiles.active')) {
+        println 'spring.profiles.active='+System.properties['spring.profiles.active']
+        args = ["--spring.profiles.active=" +System.properties['spring.profiles.active'] ]
+    }
+}
+
+bootJar{
+    println "4bootJar"
+    println "bootJar.mainClassName="+bootJar.mainClassName
+}
+
+processResources {
+    filesMatching("**/application.properties") {
+        expand( project.properties )
+    }
+}

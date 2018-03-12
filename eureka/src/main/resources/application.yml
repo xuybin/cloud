@@ -1,0 +1,30 @@
+server:
+  port: ${SERVER_PORT:8800}
+
+---
+spring:
+  profiles: standalone
+logging:
+  file: ${spring.application.name}-standalone-${HOST_NAME:localhost}-${server.port}.log
+eureka:
+  environment: ${spring.profiles.active}
+  instance:
+    hostname: ${HOST_NAME:localhost}
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+---
+spring:
+  profiles: peerAware
+logging:
+  file: ${spring.application.name}-standalone-${HOST_NAME:localhost}-${server.port}.log
+eureka:
+  environment: ${spring.profiles.active}
+  instance:
+    hostname: ${HOST_NAME:localhost}
+  client:
+    serviceUrl:
+      defaultZone: http://${PEER_HOST_NAME:localhost}:${PEER_PORT:${server.port}}/eureka/
