@@ -33,5 +33,5 @@ RUN apk add unzip --no-cache && \
 EXPOSE 9410 9411
 
 CMD test -n "$STORAGE_TYPE" && source .${STORAGE_TYPE}_profile; \
-    /zipkin/run-java.sh JAVA_MAIN_CLASS=org.springframework.boot.loader.PropertiesLauncher
+    exec /zipkin/run-java.sh JAVA_MAIN_CLASS=org.springframework.boot.loader.PropertiesLauncher
 # exec java ${JAVA_OPTS} -cp . org.springframework.boot.loader.PropertiesLauncher
