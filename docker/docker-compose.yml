@@ -3,7 +3,7 @@ version: '2'
 services:
   # Run Cassandra instead of MySQL
   storage:
-    image: openzipkin/zipkin-cassandra
+    image: registry.cn-shenzhen.aliyuncs.com/xuybin/cassandra
     container_name: cassandra
     # Uncomment to expose the storage port for testing
     ports:
@@ -11,7 +11,7 @@ services:
 
   # Switch storage type to Cassandra
   zipkin:
-    image: openzipkin/zipkin
+    image: registry.cn-shenzhen.aliyuncs.com/xuybin/zipkin
     environment:
       - STORAGE_TYPE=cassandra3
       # When using the test docker image, or have schema pre-installed, you don't need to re-install it

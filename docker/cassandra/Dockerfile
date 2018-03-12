@@ -11,12 +11,12 @@ ENV CASSANDRA_VERSION=3.11.1 \
     JVM_OPTS="-Dcassandra -Dcassandra.config.loader=ZipkinConfigurationLoader -Djava.net.preferIPv4Stack=true"
 
 ADD install.sh /usr/local/bin/install
-RUN chmod +x /usr/local/bin/install && /usr/local/bin/install
+ADD run.sh /usr/local/bin/run.sh
+RUN chmod +x /usr/local/bin/install && chmod +x /usr/local/bin/run.sh && /usr/local/bin/install
 
 # cassandra complains if run as root
 USER cassandra
 
-ADD run.sh /usr/local/bin/run.sh
 CMD ["/usr/local/bin/run.sh"]
 
 EXPOSE 9160 7000 7001 9042 7199
