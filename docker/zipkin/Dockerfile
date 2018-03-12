@@ -26,15 +26,9 @@ WORKDIR /zipkin
 
 RUN apk add unzip --no-cache && \
     curl -SL $ZIPKIN_REPO/io/zipkin/java/zipkin-server/$ZIPKIN_VERSION/zipkin-server-$ZIPKIN_VERSION-exec.jar > zipkin-server.jar && \
-    echo '0' && \
-    unzip zipkin-server.jar && \
-    echo '1' && \
-    rm zipkin-server.jar && \
-    echo '2' && \
-    apk del unzip && \
-    echo '3' && \
+    ( unzip zipkin-server.jar || rm zipkin-server.jar ) && \
     chmod +x /zipkin/run-java.sh && \
-    echo '4'
+     apk del unzip
 
 EXPOSE 9410 9411
 
