@@ -31,7 +31,7 @@ RUN apk add unzip --no-cache && \
     curl -SL $ZIPKIN_REPO/io/zipkin/java/zipkin-autoconfigure-collector-kafka10/$ZIPKIN_VERSION/zipkin-autoconfigure-collector-kafka10-$ZIPKIN_VERSION-module.jar > kafka10.jar && \
     unzip kafka10.jar -d kafka10 && \
     rm kafka10.jar && \
-    chmod +x /zipkin/run-java.sh
+    chmod +x /zipkin/run-java.sh && \
     apk del unzip
 
 EXPOSE 9410 9411
