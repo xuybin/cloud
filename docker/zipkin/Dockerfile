@@ -28,8 +28,6 @@ RUN apk add unzip --no-cache && \
     curl -SL $ZIPKIN_REPO/io/zipkin/java/zipkin-server/$ZIPKIN_VERSION/zipkin-server-$ZIPKIN_VERSION-exec.jar > zipkin-server.jar && \
     unzip zipkin-server.jar && \
     rm zipkin-server.jar && \
-    curl -SL $ZIPKIN_REPO/io/zipkin/java/zipkin-autoconfigure-collector-kafka10/$ZIPKIN_VERSION/zipkin-autoconfigure-collector-kafka10-$ZIPKIN_VERSION-module.jar > kafka10.jar && \
-    unzip kafka10.jar -d kafka10 && \
     rm kafka10.jar && \
     chmod +x /zipkin/run-java.sh && \
     apk del unzip
@@ -37,6 +35,5 @@ RUN apk add unzip --no-cache && \
 EXPOSE 9410 9411
 
 CMD test -n "$STORAGE_TYPE" && source .${STORAGE_TYPE}_profile; \
-    test -n "$KAFKA_BOOTSTRAP_SERVERS" && JAVA_OPTS="${JAVA_OPTS} -Dloader.path=kafka10 -Dspring.profiles.active=kafka"; \
     /zipkin/run-java.sh JAVA_MAIN_CLASS=org.springframework.boot.loader.PropertiesLauncher
 # exec java ${JAVA_OPTS} -cp . org.springframework.boot.loader.PropertiesLauncher
