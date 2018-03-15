@@ -1,5 +1,7 @@
 include 'eureka'
-include 'provider'
-include 'consumer'
-
+include 'config'
+include 'zuul'
+include 'turbine'
+include 'example-publisher'
+include 'example-consumer'
 

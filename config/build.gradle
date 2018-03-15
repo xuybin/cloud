@@ -14,10 +14,6 @@ apply plugin: 'io.spring.dependency-management'
 group = 'people.data.cloud'
 version = '1.0.0'
 sourceCompatibility = "${System.properties['javaVersion']}"
-targetCompatibility = "${System.properties['javaVersion']}"
-tasks.withType(JavaCompile) {
-    options.encoding = "${System.properties['encoding']}"
-}
 
 repositories {
 	mavenCentral()
@@ -25,8 +21,9 @@ repositories {
 }
 
 dependencies {
+	compile('org.springframework.cloud:spring-cloud-config-server')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
+	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
 }
 
 dependencyManagement {

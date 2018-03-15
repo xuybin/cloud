@@ -1,0 +1,16 @@
+// 作为单独项目使用时,未定义变量则重新定义
+if (!System.properties['springBootVersion']) {
+    System.properties['springBootVersion'] =  '2.0.0.RELEASE'
+}
+if (!System.properties['springCloudVersion']) {
+    System.properties['springCloudVersion'] = 'Finchley.M8'
+}
+if (!System.properties['javaVersion']) {
+    System.properties['javaVersion'] = '1.8'
+}
+if (!System.properties['kotlinVersion']) {
+    System.properties['kotlinVersion'] = '1.2.30'
+}
+if (!System.properties['encoding']) {
+    System.properties['encoding'] = 'UTF-8'
+}

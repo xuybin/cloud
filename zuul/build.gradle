@@ -16,17 +16,18 @@ version = '1.0.0'
 sourceCompatibility = "${System.properties['javaVersion']}"
 targetCompatibility = "${System.properties['javaVersion']}"
 tasks.withType(JavaCompile) {
-    options.encoding = "${System.properties['encoding']}"
+	options.encoding = "${System.properties['encoding']}"
 }
 
 repositories {
 	mavenCentral()
 	maven { url "https://repo.spring.io/milestone" }
 }
-
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
+	compile('org.springframework.cloud:spring-cloud-starter-config')
+	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+	compile('org.springframework.cloud:spring-cloud-starter-netflix-zuul')
 }
 
 dependencyManagement {
