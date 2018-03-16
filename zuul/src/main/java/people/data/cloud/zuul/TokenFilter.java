@@ -37,7 +37,7 @@ public class TokenFilter extends ZuulFilter {
         log.info(String.format("%s >>> %s", request.getMethod(), request.getRequestURL().toString()));
         String accessToken = request.getHeader("Authorization");
         if(StringUtils.isAllBlank(accessToken) && StringUtils.equalsIgnoreCase(request.getMethod(),"GET")){
-            accessToken = request.getParameter("token");
+            accessToken = request.getParameter("AccessToken");
         }
 
         if(StringUtils.isAllBlank(accessToken)) {
