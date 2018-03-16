@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients
 @EnableDiscoveryClient
 @EnableFeignClients
 @SpringBootApplication
-@EnableHystrix
+//Feign包含@EnableHystrix
 @EnableHystrixDashboard
 class ExampleConsumerApplication
 

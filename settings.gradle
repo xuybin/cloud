@@ -3,5 +3,6 @@ include 'config'
 include 'zuul'
 include 'turbine.properties'
 include 'example-publisher'
-include 'example-consumer'
+include 'example-consumer-openfeign'
+include 'example-consumer-ribbon'
 

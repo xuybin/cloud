@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
 class AddController {
 
     @Value("\${server.port}")
-    internal var port: String? = null
+    lateinit var port: String
 
     @RequestMapping(value = "/{a}/{b}", method = arrayOf(RequestMethod.GET))
     fun add(@PathVariable a: Int, @PathVariable b: Int): Mono<String> {
