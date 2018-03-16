@@ -1,7 +1,7 @@
 include 'eureka'
 include 'config'
 include 'zuul'
-include 'turbine'
+include 'turbine.properties'
 include 'example-publisher'
 include 'example-consumer'
 
