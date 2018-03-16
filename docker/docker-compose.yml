@@ -1,25 +1,133 @@
-version: '2'
+version: '3'
 
 services:
-  # Run Cassandra instead of MySQL
-  storage:
+  # 服务调用链路和依赖追踪依赖的存储
+  zipkin-storage:
     image: registry.cn-shenzhen.aliyuncs.com/xuybin/cassandra
-    container_name: cassandra
-    # Uncomment to expose the storage port for testing
+    hostname: cassandra
+    networks:
+      - pdnet
+    volumes:
+      - zipkin-storage-data:/cassandra/data
     ports:
-     - 8081:9042
+     # 容器外cqlsh查看数据时开启
+     # - 8081:9042
 
-  # Switch storage type to Cassandra
+  # 服务调用链路和依赖追踪
   zipkin:
     image: registry.cn-shenzhen.aliyuncs.com/xuybin/zipkin
+    hostname: zipkin
+    networks:
+      - pdnet
     environment:
       - STORAGE_TYPE=cassandra3
-      # When using the test docker image, or have schema pre-installed, you don't need to re-install it
+      # 定制的cassandra镜像,已经初始化模型
       - CASSANDRA_ENSURE_SCHEMA=false
-      # When overriding this value, note the minimum supported version is 3.9
-      # If you you cannot run 3.9+, but can run 2.2+, set STORAGE_TYPE=cassandra
+      # zipkin-storage的hostname
       - CASSANDRA_CONTACT_POINTS=cassandra
-    depends_on:
-      - storage
     ports:
+      # web管理端口
       - 8091:9411
+    depends_on:
+      - zipkin-storage
+
+  # 消息总线
+  rabbitmq:
+    image: rabbitmq:management
+    hostname: rabbitmq
+    networks:
+      - pdnet
+    environment:
+      - RABBITMQ_DEFAULT_USER=xyb
+      - RABBITMQ_DEFAULT_PASS=xyb2018
+    ports:
+      # web管理端口
+      - 8092:15672
+
+  # 服务发现节点1,互相感知对方
+  eureka1:
+    image: registry.cn-shenzhen.aliyuncs.com/xuybin/eureka
+    hostname: eureka1
+    networks:
+      - pdnet
+    environment:
+      - CLUSTER_ID=1
+      - SERVER_PORT=8071
+      - IS_PEERAWARE=true
+      - PEERAWARE_URI=http://eureka2:8072/eureka/
+    volumes:
+      - "./log:/root/log"
+    ports:
+      - 8071:8071
+
+  # 服务发现节点2,互相感知对方
+  eureka2:
+    image: registry.cn-shenzhen.aliyuncs.com/xuybin/eureka
+    hostname: eureka2
+    networks:
+      - pdnet
+    environment:
+      - CLUSTER_ID=2
+      - SERVER_PORT=8072
+      - IS_PEERAWARE=true
+      - PEERAWARE_URI=http://eureka1:8071/eureka/
+    volumes:
+      - "./log:/root/log"
+    ports:
+      - 8072:8072
+
+  # 配置服务节点1
+  config1:
+    image: registry.cn-shenzhen.aliyuncs.com/xuybin/config
+    networks:
+      - pdnet
+    environment:
+      - CLUSTER_ID=1
+      - SERVER_PORT=8061
+      - EUREKA_URI=http://eureka1:8071/eureka/
+    volumes:
+      - "./log:/root/log"
+      - "./config-repo:/root/config-repo:ro"
+    ports:
+      - 8061:8061
+    depends_on:
+      - eureka1
+
+  # 配置服务节点2
+  config2:
+    image: registry.cn-shenzhen.aliyuncs.com/xuybin/config
+    networks:
+      - pdnet
+    environment:
+      - CLUSTER_ID=2
+      - SERVER_PORT=8062
+      - EUREKA_URI=http://eureka2:8072/eureka/
+    volumes:
+      - "./log:/root/log"
+      - "./config-repo:/root/config-repo:ro"
+    ports:
+      - 8062:8062
+    depends_on:
+      - eureka2
+
+  # 配置服务节点2
+  zuul1:
+    image: registry.cn-shenzhen.aliyuncs.com/xuybin/zuul
+    networks:
+      - pdnet
+    environment:
+      - CLUSTER_ID=1
+      - SERVER_PORT=8081
+      - EUREKA_URI=http://eureka1:8071/eureka/
+    volumes:
+      - "./log:/root/log"
+    ports:
+      - 8081:8081
+    depends_on:
+      - eureka2
+
+networks:
+  pdnet:
+
+volumes:
+  zipkin-storage-data:
